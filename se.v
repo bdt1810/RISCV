@@ -5,7 +5,7 @@
 `define SE12_ST 3'b101
 `define SE20_JP 3'b110
 
-module signextend(in, out, sel);
+module se(out, sel, in);
 	parameter nin = 32;
 	parameter nout = 32;
 	input [nin-1:nin-25] in;
