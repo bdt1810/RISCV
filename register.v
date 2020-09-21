@@ -1,4 +1,4 @@
-module register(AddrD,AddrA,AddrB,DataD,clk,RegWEn,DataA,DataB);
+module register(AddrD,AddrA,AddrB,DataD,RegWEn,DataA,DataB,clk);
 
 input wire[4:0] AddrD,AddrA,AddrB;
 input wire[31:0] DataD;
