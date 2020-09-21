@@ -1,4 +1,4 @@
-module pc (clk, pcin, pcout);
+module pc (pcout, pcin, clk);
 	parameter n = 32;
 	input clk;
 	input [n-1:0] pcin;
