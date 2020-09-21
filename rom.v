@@ -50,14 +50,13 @@
 `define SH		2'b01
 `define SB		2'b00
 
-module rom (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, RegWEn, Memsel, MemCtr, WBsel,temp);
+module rom (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, RegWEn, Memsel, MemCtr, WBsel);
 	input [8:0] ins;
 	input BrEq, BrLT;
 	output reg PCsel, BrUN, Asel, Bsel, MemRW, RegWEn;
 	output reg [3:0] ALUsel;
 	output reg [2:0] Immsel, Memsel;
 	output reg [1:0] WBsel, MemCtr;
-	output reg [19:0] temp;
 	
 	always @(*)
 	begin
