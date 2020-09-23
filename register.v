@@ -22,7 +22,7 @@ begin
         end
 end
 
-always @(posedge clk)
+	always @(AddrA or AddrB)
 begin
 	DataA <= R[AddrA];
 	DataB <= R[AddrB];
