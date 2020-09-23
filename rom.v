@@ -14,20 +14,20 @@
 `define ENABLE  	1'b1
 `define DISABLE		1'b0
 
-`define REGISTER	1'b1
-`define PC		1'b0
-`define IMM		1'b0
+`define REGISTER	1'b0
+`define PC		1'b1
+`define IMM		1'b1
 
 `define ADD		4'b0000
 `define SUB		4'b0001	
-`define COM		4'b0010
-`define COMU		4'b0011
+`define COM		4'b1001
+`define COMU		4'b1010
 `define XOR		4'b0100
-`define OR		4'b0101
-`define AND		4'b0110
-`define SRL		4'b0111
-`define SLL		4'b1000
-`define SRA		4'b1001
+`define OR		4'b0011
+`define AND		4'b0010
+`define SRL		4'b0110
+`define SLL		4'b0101
+`define SRA		4'b0111
 
 `define SE20_UI 	3'b001
 `define SE12_LI 	3'b010
