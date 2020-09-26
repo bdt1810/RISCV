@@ -474,8 +474,8 @@ module rom (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, Reg
 								PCsel = `ALU1;
 								Immsel = `SE12_BR;
 								RegWEn = `DISABLE;		
-								Asel = `REGISTER;					
-								Bsel = `REGISTER;	
+								Asel = `PC;					
+								Bsel = `IMM;	
 								ALUsel = `ADD;		
 								MemCtr = 2'b00;
 								MemRW =	`DISABLE;
@@ -490,8 +490,8 @@ module rom (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, Reg
 								PCsel = `ALU1;
 								Immsel = `SE12_BR;
 								RegWEn = `DISABLE;		
-								Asel = `REGISTER;					
-								Bsel = `REGISTER;	
+								Asel = `PC;					
+								Bsel = `IMM;	
 								ALUsel = `ADD;		
 								MemCtr = 2'b00;
 								MemRW =	`DISABLE;
@@ -534,8 +534,8 @@ module rom (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, Reg
 								PCsel = `ALU1;
 								Immsel = `SE12_BR;
 								RegWEn = `DISABLE;		
-								Asel = `REGISTER;					
-								Bsel = `REGISTER;	
+								Asel = `PC;					
+								Bsel = `IMM;	
 								ALUsel = `ADD;		
 								MemCtr = 2'b00;
 								MemRW =	`DISABLE;
@@ -550,8 +550,8 @@ module rom (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, Reg
 								PCsel = `ALU1;
 								Immsel = `SE12_BR;
 								RegWEn = `DISABLE;		
-								Asel = `REGISTER;					
-								Bsel = `REGISTER;	
+								Asel = `PC;					
+								Bsel = `IMM;	
 								ALUsel = `ADD;		
 								MemCtr = 2'b00;
 								MemRW =	`DISABLE;
@@ -594,8 +594,8 @@ module rom (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, Reg
 								PCsel = `ALU1;
 								Immsel = `SE12_BR;
 								RegWEn = `DISABLE;		
-								Asel = `REGISTER;					
-								Bsel = `REGISTER;	
+								Asel = `PC;					
+								Bsel = `IMM;	
 								ALUsel = `ADD;		
 								MemCtr = 2'b00;
 								MemRW =	`DISABLE;
@@ -610,8 +610,8 @@ module rom (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, Reg
 								PCsel = `ALU1;
 								Immsel = `SE12_BR;
 								RegWEn = `DISABLE;		
-								Asel = `REGISTER;					
-								Bsel = `REGISTER;	
+								Asel = `PC;					
+								Bsel = `IMM;	
 								ALUsel = `ADD;		
 								MemCtr = 2'b00;
 								MemRW =	`DISABLE;
