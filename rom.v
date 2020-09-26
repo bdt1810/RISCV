@@ -66,7 +66,7 @@ module rom (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, Reg
 							1'b0:	begin			// ADD
 								BrUN = 1'b0;
 								PCsel = `PC1;
-								Immsel = 0'b000;
+								Immsel = 3'b000;
 								RegWEn = `ENABLE;		
 								Asel = `REGISTER;					
 								Bsel = `REGISTER;	
@@ -81,7 +81,7 @@ module rom (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, Reg
 						 	1'b1:	begin			// SUB
 								BrUN = 1'b0;
 								PCsel = `PC1;
-								Immsel = 0'b000;
+								Immsel = 3'b000;
 								RegWEn = `ENABLE;		
 								Asel = `REGISTER;					
 								Bsel = `REGISTER;	
@@ -95,7 +95,7 @@ module rom (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, Reg
 					3'b001: begin					// SLL
 						BrUN = 1'b0;
 						PCsel = `PC1;
-						Immsel = 0'b000;
+						Immsel = 3'b000;
 						RegWEn = `ENABLE;		
 						Asel = `REGISTER;					
 						Bsel = `REGISTER;	
@@ -109,7 +109,7 @@ module rom (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, Reg
 					3'b010: begin					// SLT
 						BrUN = 1'b0;
 						PCsel = `PC1;
-						Immsel = 0'b000;
+						Immsel = 3'b000;
 						RegWEn = `ENABLE;		
 						Asel = `REGISTER;					
 						Bsel = `REGISTER;	
@@ -123,7 +123,7 @@ module rom (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, Reg
 					3'b011: begin					// SLTU
 						BrUN = 1'b0;
 						PCsel = `PC1;
-						Immsel = 0'b000;
+						Immsel = 3'b000;
 						RegWEn = `ENABLE;		
 						Asel = `REGISTER;					
 						Bsel = `REGISTER;	
@@ -137,7 +137,7 @@ module rom (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, Reg
 					3'b100: begin					// XOR
 						BrUN = 1'b0;
 						PCsel = `PC1;
-						Immsel = 0'b000;
+						Immsel = 3'b000;
 						RegWEn = `ENABLE;		
 						Asel = `REGISTER;					
 						Bsel = `REGISTER;	
@@ -152,7 +152,7 @@ module rom (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, Reg
 							1'b0: 	begin			// SRL
 								BrUN = 1'b0;
 								PCsel = `PC1;
-								Immsel = 0'b000;
+								Immsel = 3'b000;
 								RegWEn = `ENABLE;		
 								Asel = `REGISTER;					
 								Bsel = `REGISTER;	
@@ -166,7 +166,7 @@ module rom (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, Reg
 							1'b1:	begin			// SRA
 								BrUN = 1'b0;
 								PCsel = `PC1;
-								Immsel = 0'b000;
+								Immsel = 3'b000;
 								RegWEn = `ENABLE;		
 								Asel = `REGISTER;					
 								Bsel = `REGISTER;	
@@ -181,7 +181,7 @@ module rom (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, Reg
 					3'b110: begin					// OR
 						BrUN = 1'b0;
 						PCsel = `PC1;
-						Immsel = 0'b000;
+						Immsel = 3'b000;
 						RegWEn = `ENABLE;		
 						Asel = `REGISTER;					
 						Bsel = `REGISTER;	
@@ -195,7 +195,7 @@ module rom (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, Reg
 					3'b111: begin					// AND
 						BrUN = 1'b0;
 						PCsel = `PC1;
-						Immsel = 0'b000;
+						Immsel = 3'b000;
 						RegWEn = `ENABLE;		
 						Asel = `REGISTER;					
 						Bsel = `REGISTER;	
