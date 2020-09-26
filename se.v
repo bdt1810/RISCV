@@ -37,7 +37,7 @@ module se(out, sel, in);
 			out[10:5] = in[30:25];
 			out[11] = in[7];
 			out[12] = in[31];
-			out[31:13] = {20{in[31]}};
+			out[31:13] = {19{in[31]}};
 		end
 	else if (sel == `SE12_ST)				// S TYPE
 		begin
@@ -47,14 +47,14 @@ module se(out, sel, in);
 		end
 	else if (sel == `SE20_JP)				// JAL
 		begin
-			out[9:0] = in[30:21];
-			out[10] = in[20];
-			out[18:11] = in[19:12];
-			out[19] = in[31];
-			out[31:20] = {12{in[31]}};
+			out[0] = {1'b0};
+			out[10:1] = in[30:21];
+			out[11] = in[20];
+			out[19:12] = in[19:12];
+			out[20] = in[31];
+			out[31:21] = {11{in[31]}};
 		end	
 	else 
 		out = 32'h0;	
 	end
 endmodule
- 
