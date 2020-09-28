@@ -1,7 +1,7 @@
 `define SW	2'b00
 `define SH	2'b01
 `define SB	2'b00
-module memctr(DataW, MemCtrl, DataB);
+module memctr(DataW, MemCtr, DataB);
 	parameter n = 32; 
 	input [n-1:0] DataB;
 	output [n-1:0] DataW;  
