@@ -1,15 +1,4 @@
 `timescale 1 ns/ 1 ns
-`include "mux21.v"
-`include "pc.v"
-`include "imem.v"
-`include "register.v"
-`include "branch.v"
-`include "alu.v"
-`include "mux31.v"
-`include "rom.v"
-`include "se.v"
-`include "memctr.v"
-`include "memsel.v"
 
 module RISCV(clk);
 input clk;
