@@ -1,6 +1,6 @@
 module dmem(DataR, ALU_Out, MemRW, DataW, clk );
 	parameter n = 32;
-	parameter a = 1<<20;
+	parameter a = 1<<10;
 	input MemRW, clk;
 	input [n-1:0] ALU_Out;
 	input [n-1:0] DataW;
