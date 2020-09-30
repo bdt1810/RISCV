@@ -7,7 +7,7 @@ wire[4:0] AddrD, AddrA, AddrB;
 wire[3:0] ALU_Sel;
 wire[2:0] ImmSel, MemSel;
 wire[1:0] WBSel, MemCtr;
-wire RegWEn, BrEq, BrLT, PCsel, BrUN, ASel, BSel, MemRW;
+wire RegWEn, BrEq, BrLT, PCsel, BrUn, ASel, BSel, MemRW;
 wire [8:0] instrom;
 
 wire [24:0] imm_in;
@@ -32,6 +32,6 @@ mux31 mux31(DataD,WBSel, pc_4, ALU_Out, memsel_out);
 dmem dmem(DataR, ALU_Out, MemRW, DataW, clk );
 memctr memctr(DataW, MemCtr, DataB);
 memsel memsel(memsel_out, MemSel, DataR);	
-rom rom(instrom, BrEq, BrLT, PCsel, ImmSel, BrUN, ASel, BSel, ALU_Sel, MemRW, RegWEn, MemSel, MemCtr, WBSel);
+rom rom(instrom, BrEq, BrLT, PCsel, ImmSel, BrUn, ASel, BSel, ALU_Sel, MemRW, RegWEn, MemSel, MemCtr, WBSel);
            
  endmodule       
