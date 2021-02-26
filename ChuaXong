@@ -51,7 +51,7 @@ ABC ABC(PC, addr, prediction, inst, out3);
 mux31 mux2(out2, {PCsel2,PCsel_2clock},oldPC, ALU_out, PC);
 mux21 mux3(out1, true, out2, out3);
 truth truth(flush2, PCsel2, pprediction, flush, temp6);
-
+pc pc(PC, out1, sel, clk);
 Dff Dff1(tmp1, outC1, out1, tmp1, clk);
 Dff Dff2(tmp2, outC1, inst, tmp2, clk);
 Dff Dff_Imm(tmpImm, outC1, Imm_Out, tmpImm, clk);
