@@ -46,12 +46,12 @@ rom11 romIMEM(instrom, BrEq, BrLT, PCSel, ImmSel, BrUn, ASel, BSel, ALU_Sel, Mem
 assign Imm_In = {inst[31:7]};
 se se(imm_Out, ImmSel, Imm_In);
 pre_add pre_add(addr, PC, imm_Out);
-Dbranch Dbranch(prediction, true, PCsel_2clock, clk, PC, tmp6);
+Dbranch Dbranch(prediction, true, pprediction, PCSel2, clk, PC, tmp6);
 ABC ABC(PC, addr, prediction, inst, out3);
-mux31 mux2(out2, {PCsel2,PCsel_2clock},oldPC, ALU_out, PC);
+mux31 mux2(out2, {PCSelx,PCSel2},tmp3 , ALU_Out, PC);
 mux21 mux3(out1, true, out2, out3);
-truth truth(flush2, PCsel2, pprediction, flush, temp6);
-pc pc(PC, out1, sel, clk);
+truth truth(flush2, PCSelx, pprediction, outC2, tmp6);
+pc pc(PC, out1, outPC, clk);
 Dff Dff1(tmp1, outC1, out1, tmp1, clk);
 Dff Dff2(tmp2, outC1, inst, tmp2, clk);
 Dff Dff_Imm(tmpImm, outC1, Imm_Out, tmpImm, clk);
