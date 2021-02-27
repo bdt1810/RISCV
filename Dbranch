@@ -4,11 +4,11 @@
 `include "choice.v"
 `include "GHT.v"
 `include "taken.v"
-`include "Dff.v"
-module Dbranch(prediction, true, PCsel, clk, PC, inst);
+`include "Dffx.v"
+module Dbranch(prediction, true, pprediction, PCsel, clk, PC, inst);
 input PCsel, clk;
 input [31:0] PC, inst;
-output prediction, true;
+output prediction, true, pprediction;
 wire lpredict, gpredict, select, plpredict, pgpredict;
 wire [9:0] addr1, past1;
 wire [11:0] addr2, past2;
@@ -20,7 +20,8 @@ GHT GHT(addr2, PCsel, inst, clk);
 GPT GPT(gpredict, addr2, past2, clk, taken2, inst);
 choice CPT(select, addr2, past2, taken1, taken2, clk, inst);
 taken taken(true, taken1, taken2, inst, prediction, plpredict, pgpredict, PCsel, clk);
-Dff #(24) Dff1(temp,1'b0,addr,clk);
-Dff #(24) Dff2({past2,past1,pgpredict,plpredict},1'b0,temp,clk);
+Dffx #(24) Dff1(temp,1'b0,addr,clk);
+Dffx #(24) Dff2({past2,past1,pgpredict,plpredict},1'b0,temp,clk);
+Dffx #(1)  Dff3(pprediction,1'b0,prediction,clk); 
 assign prediction = select ? gpredict : lpredict;
 endmodule
