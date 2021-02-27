@@ -1,3 +1,4 @@
+
 module choice(choice, addr, past, taken1, taken2, clk, inst);
 input taken1, taken2, clk;
 input [31:0] inst;
