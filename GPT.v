@@ -2,10 +2,18 @@ module GPT(predict, addr, past, clk, taken2, inst);
 input [11:0] addr, past;
 input clk, taken2;
 input [31:0] inst;
+integer i;
 output predict;
 reg [1:0] counter [0:4095];
 assign predict = (counter[addr] >= 2) ? 1'b1: 1'b0;
-always @(negedge clk)
+initial
+begin
+	for (i=0; i<4096; i=i+1)
+	begin
+		counter[i] <= 2'b11;
+	end
+end
+always @(*)
 begin
 	if (inst[6:0] === 7'b1100011)
 	begin

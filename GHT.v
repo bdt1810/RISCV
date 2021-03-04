@@ -3,7 +3,11 @@ module GHT(addr, PCsel, inst, clk);
 	input [31:0] inst;
 	output [11:0] addr;
 	reg [11:0] GHR;
-	always @(negedge clk)
+	initial 
+	begin
+		GHR[11:0] <= 12'b111111111111; 
+	end
+	always @(*)
 	begin
 		if (inst[6:0] == 7'b1100011)
 		begin

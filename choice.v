@@ -3,10 +3,18 @@ module choice(choice, addr, past, taken1, taken2, clk, inst);
 input taken1, taken2, clk;
 input [31:0] inst;
 input [11:0] addr, past;
+integer i;
 output choice;
 reg [1:0] counter [0:4095];
 assign choice = (counter[addr] >= 2) ? 1'b1: 1'b0;
-always @(clk)
+initial
+begin
+	for (i=0; i<4096; i=i+1)
+	begin
+		counter[i] <= 2'b00;
+	end
+end
+always @(*)
 begin
 	if (inst[6:0]===7'b1100011)
 	case (counter[past])

@@ -12,7 +12,7 @@ begin
 		LHT[i] <= 10'b1111111111;
 	end
 end
-always @(*)
+always @(negedge clk)
 begin
 	if (inst[31:0] === 7'b1100011)
 	begin

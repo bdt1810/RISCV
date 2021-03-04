@@ -2,10 +2,18 @@ module pattern(predict, addr, past, clk, taken1, inst);
 input [9:0] addr, past;
 input clk, taken1;
 input [31:0] inst;
+integer i;
 output predict;
 reg [2:0] counter [0:1023];
 assign predict = (counter[addr] >= 4) ? 1'b1: 1'b0;
-always @(negedge clk)
+initial
+begin
+	for (i=0; i<1024; i=i+1)
+	begin
+		counter[i] <= 3'b111;
+	end
+end
+always @(*)
 begin
 	if (inst[6:0] === 7'b1100011)
 	begin

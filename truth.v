@@ -16,27 +16,38 @@ begin
 			2'b000: //PC4
 			begin
 				PCsel2 <= 1'b1;
-				flush2 <= 1'b00;
+				flush2 <= 2'b00;
 			end
 			2'b011: //ALU
 			begin
 				PCsel2 <= 1'b0;
-				flush2 <= 1'b11;
+				flush2 <= 2'b11;
 			end
 			2'b100: //PC
 			begin
 				PCsel2 <= 1'b0;
-				flush2 <= 1'b11;
+				flush2 <= 2'b11;
 			end
 			2'b111: //PC4
 			begin
 				PCsel2 <= 1'b1;
-				flush2 <= 1'b00;
+				flush2 <= 2'b00;
 			end
 		endcase
 	end
+	else if (inst[6:0] === 7'b1101111)
+	begin
+		PCsel2 <= 1'b0;
+		flush2 <= 2'b11; 
+	end
+	else if (inst[6:0] === 7'b1100111)
+	begin
+		PCsel2 <= 1'b0;
+		flush2 <= 2'b11;
+	end
 	else 
 	begin
+		PCsel2 <= 1'b1;
 		flush2 <= flush;
 	end
 end

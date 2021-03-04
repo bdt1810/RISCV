@@ -8,12 +8,11 @@ module pc (pcout, pcin, sel, clk);
 	begin	
 	pcout <= 32'd0;
 	end
-	
 	always @(posedge clk)
 	begin
 	case(sel)
 	1'b0:
-		pcout <= pcin +4;
+		pcout <= pcin + 4;
 	1'b1:
 		pcout <= pcin;
 	endcase

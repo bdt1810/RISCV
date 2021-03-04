@@ -17,7 +17,7 @@ assign addr = {addr2,addr1,gpredict,lpredict};
 dynamic LHR(addr1, PC, inst, PCsel, clk, past1);
 pattern LHT(lpredict, addr1, past1, clk, taken1, inst);
 GHT GHT(addr2, PCsel, inst, clk);
-GPT GPT(gpredict, addr2, past2, clk, taken2, inst);
+GPT GPT(gpredict, addr2, past2, clk, true, inst);
 choice CPT(select, addr2, past2, taken1, taken2, clk, inst);
 taken taken(true, taken1, taken2, inst, pprediction, plpredict, pgpredict, PCsel, clk);
 Dffx #(24) Dff1(temp,1'b0,addr,clk);

@@ -76,7 +76,7 @@ Dffrom Dffrom2(instrom3, outC2, outI, instrom2,instrom3, clk);
 //Memory access
 pc4 pc4_2(pc42, tmp7);
 memctr memctr(DataW, MemCtr3, tmp9);
-CacheModule1 CacheModule1(clk, tmp8, DataW, V, DataR);
+dmem dmem(DataR, MemRW3,tmp8, DataW, clk);
 memsel memsel(memsel_out, MemSel3, DataR);	
 mux31 mux31(mux31_out, WBSel3, memsel_out, tmp8, pc42);
 Dff Dff11(DataD, clear, mux31_out, DataD, clk);
@@ -93,3 +93,4 @@ assign BrLT4 = 1'b0;
 rom12 rom4(instrom4, PCSel4, ImmSel4, BrUn4, ASel4, BSel4, ALU_Sel4, MemRW4, RegWEn4, MemSel4, MemCtr4, WBSel4);
 Dffrom Dffrom4(instrom5, clear,clear1, instrom4, instrom5, clk);
 endmodule
+
