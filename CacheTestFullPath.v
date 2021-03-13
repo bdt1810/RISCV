@@ -43,13 +43,14 @@ fforwardCtrlab forwardCtrlab(outI, outA, outB, outC1, outC2, outC3, outD, outPC,
 IMEM1 IMEM1(inst, out1, clk); //Out, In
 assign Imm_In = {inst[31:7]};
 se se1(Imm_Out, 3'b100, Imm_In);
-pre_add pre_add(addr, PC, Imm_Out);
+pre_add pre_add(addr, out1, Imm_Out);
 Dbranch Dbranch(prediction, true, pprediction, outPC, clk, PC, tmp6);
-ABC ABC(PC, addr, prediction, inst, out3);
-mux31 mux31f(out21, {PCSelx,outPC}, pc42 , ALU_Out, PC);
-ABD ABD(out21, out3, inst, tmp6, out1);
-truth truth(flush2, PCSelx, pprediction, outC2, tmp6);
 pc pc(PC, out1, outI, clk);
+//ABC ABC(PC, addr, prediction, inst, clk, out3);
+mux21 mux21g(out3, prediction, addr, PC);
+mux31 mux31f(out21, {PCSelx,outPC}, pc42 , ALU_Out, PC);
+ABD ABD(out21, out3, inst, tmp2, outI, out1);
+truth truth(flush2, PCSelx, pprediction, outC2, tmp6);
 Dff Dff1(tmp1, outC1, out1, tmp1, clk);
 Dff Dff2(tmp2, outC1, inst, tmp2, clk);
 Dff Dff_Imm(tmpImm, outC1, Imm_Out, tmpImm, clk);
@@ -86,6 +87,7 @@ Dffrom Dffrom2(instrom3, outC2, outI, instrom2,instrom3, clk);
 //Memory acces
 memctr memctr(DataW, MemCtr3, tmp9);
 CacheModule1 CacheModule1(clk, tmp8, DataW, V, DataR);
+//dmem dmem(DataR, MemRW3,tmp8, DataW, clk );
 memsel memsel(memsel_out, MemSel3, DataR);	
 mux31 mux31(mux31_out, WBSel3, memsel_out, tmp8, tmp7);
 Dff Dff11(DataD, clear, mux31_out, DataD, clk);
@@ -94,8 +96,7 @@ Dff325 Dff12(AddrD, clear1, tmp10, clk);
 assign BrEq3 = 1'b0;
 assign BrLT3 = 1'b0;
 rom11 rom3(instrom3,BrEq3, BrLT3, PCSel3, ImmSel3, BrUn3, ASel3, BSel3, ALU_Sel3, MemRW3, RegWEn3, MemSel3, MemCtr3, WBSel3);
-Dffrom Dffrom3(instrom4, clear, outI, instrom3,instrom4, clk);	//
-
+Dffrom Dffrom3(instrom4, clear, outI, instrom3,instrom4, clk);	
 //Write back
 assign BrEq4 = 1'b0;
 assign BrLT4 = 1'b0;

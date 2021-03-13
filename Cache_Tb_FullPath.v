@@ -4,8 +4,8 @@ module CacheFinalTest;
 	
 	initial 
 	begin
-		clk=1;
-		forever #400
+		clk=0;
+		forever #200
 		clk= ~clk;
 	end
 	begin

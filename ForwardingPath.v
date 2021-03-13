@@ -40,7 +40,7 @@ fforwardCtrlab forwardCtrlab(outI, outA, outB, outC1, outC2, outC3, outD, outPC,
 pc pc(pc_out, out1, outI, clk);
 //pc4 pc4(pc_in, out1);
 mux21 PCmux(out1, outPC, ALU_Out, pc_out);
-IMEM1 IMEM1(inst, out1);
+IMEM1 IMEM1(inst, out1, clk);
 Dff Dff1(tmp1, outC1, out1, tmp1, clk);
 Dff Dff2(tmp2, outC1, inst, tmp2, clk);
 

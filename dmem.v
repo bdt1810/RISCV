@@ -18,9 +18,13 @@ end
 		begin
 		DMEM[ALU_Out] <= DataW;
 		end
+	else 
+		begin
+		DataR <= DMEM[ALU_Out];
+		end
 	end
-always @(ALU_Out)
-begin
-	DataR <= DMEM[ALU_Out];
-end
+//always @(ALU_Out)
+//begin
+//	DataR <= DMEM[ALU_Out];
+//end
 endmodule
