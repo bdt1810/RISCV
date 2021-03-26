@@ -1,6 +1,6 @@
 
-module choice(choice, addr, past, taken1, taken2, clk, inst);
-input taken1, taken2, clk;
+module choice(choice, addr, past, taken1, taken2, inst);
+input taken1, taken2;
 input [31:0] inst;
 input [11:0] addr, past;
 integer i;

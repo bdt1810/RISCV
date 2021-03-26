@@ -1,6 +1,6 @@
-module GPT(predict, addr, past, clk, taken2, inst);
+module GPT(predict, addr, past, taken2, inst);
 input [11:0] addr, past;
-input clk, taken2;
+input taken2;
 input [31:0] inst;
 integer i;
 output predict;

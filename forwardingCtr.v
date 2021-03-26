@@ -17,6 +17,8 @@
 `define ALU	1'b1
 `define PC	1'b0
 
+`define REG0 	5'b00000
+
 module fforwardCtrlab(outI, outA, outB, outC1, outC2, outC3, outD, outPC, inst0, inst1, inst2, inst3, type, BrEq, BrLT);
 input [31:0] inst1, inst2, inst3, inst0;
 input [2:0] type;
@@ -50,10 +52,10 @@ begin
 	begin
 		if (opcode2 === `R_TYPE || opcode2 === `I_TYPE || opcode2 === `L_TYPE || opcode2 === `JAL || opcode2 === `JALR || opcode2 === `LUI || opcode2 === `AUIPC)
 		begin
-			if (opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `LUI || opcode3 === `AUIPC)
+			if (opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `LUI || opcode3 === `AUIPC || opcode3 === `JAL || opcode3 === `JALR || opcode3 === `L_TYPE)
 			begin
-				if (rs1_inst1 === rd_inst2)
-					begin
+				if ((rs1_inst1 === rd_inst2) && (rd_inst2 !== `REG0))
+				begin
 					outI = 1'b0;
 					outA = 2'b10;
 					outB = 2'b00;
@@ -61,9 +63,9 @@ begin
 					outC2 = 2'b00;
 					outD = 2'b00;
 					outPC = 1'b0;
-					end
-				else if(rs1_inst1 === rd_inst3)
-					begin
+				end
+				else if((rs1_inst1 === rd_inst3) && (rd_inst2 !== rd_inst3) && (rd_inst3 != `REG0))
+				begin
 					outI = 1'b0;
 					outA = 2'b01;
 					outB = 2'b00;
@@ -71,9 +73,9 @@ begin
 					outC2 = 2'b00;
 					outD = 2'b00;
 					outPC = 1'b0;
-					end
+				end
 				else
-					begin
+				begin
 					outI = 1'b0;
 					outA = 2'b00;
 					outB = 2'b00;
@@ -81,12 +83,12 @@ begin
 					outC2 = 2'b00;
 					outD = 2'b00;
 					outPC = 1'b0;
-					end
+				end
 			end
-			else if	(opcode3 === `S_TYPE || opcode3 === `B_TYPE)
+			else if	(opcode3 === `S_TYPE || opcode3 === `B_TYPE || opcode3 === 7'd0)
 			begin
-				if (rs1_inst1 === rd_inst2)
-					begin
+				if ((rs1_inst1 === rd_inst2) && (rd_inst2 !== `REG0))
+				begin
 					outI = 1'b0;
 					outA = 2'b10;
 					outB = 2'b00;
@@ -94,21 +96,9 @@ begin
 					outC2 = 2'b00;
 					outD = 2'b00;
 					outPC = 1'b0;
-					end
-			else if(opcode3 === `JAL || opcode3 === 7'b0000000)
-			begin
-				if (rs1_inst1 === rd_inst2)
-					begin	
-					outI = 1'b0;
-					outA = 2'b10;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-					end
-				else if (rs1_inst1 === rd_inst3)
-					begin
+				end
+				else 
+				begin
 					outI = 1'b0;
 					outA = 2'b00;
 					outB = 2'b00;
@@ -116,21 +106,10 @@ begin
 					outC2 = 2'b00;
 					outD = 2'b00;
 					outPC = 1'b0;
-					end				
-			end
-				else 		
-					begin	
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-					end
+				end
 			end
 			else
-				begin
+			begin
 				outI = 1'b0;	
 				outA = 2'b00;
 				outB = 2'b00;
@@ -138,13 +117,13 @@ begin
 				outC2 = 2'b00;
 				outD = 2'b00;
 				outPC = 1'b0;
-				end
+			end
 		end
-		else if (opcode2 === `S_TYPE || opcode2 === `B_TYPE)
+		else if (opcode2 === `S_TYPE || opcode2 === `B_TYPE || opcode2 === 7'd0)
 		begin
-			if (opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `L_TYPE || opcode3 === `LUI || opcode3 === `AUIPC|| opcode3 === 7'b0000000)
+			if (opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `L_TYPE || opcode3 === `LUI || opcode3 === `AUIPC)
 			begin
-				if(rs1_inst1 === rd_inst3)
+				if((rs1_inst1 === rd_inst3) && (rd_inst3 !== `REG0))
 				begin
 					outI = 1'b0;
 					outA = 2'b01;
@@ -154,7 +133,7 @@ begin
 					outD = 2'b00;
 					outPC = 1'b0;
 				end
-			else 
+				else 
 				begin
 					outI = 1'b0;
 					outA = 2'b00;
@@ -165,9 +144,8 @@ begin
 					outPC = 1'b0;
 				end
 			end
-		end
-	else
-	begin		
+			else
+			begin		
 				outI = 1'b0;		
 				outA = 2'b00;
 				outB = 2'b00;
@@ -175,287 +153,280 @@ begin
 				outC2 = 2'b00;
 				outD = 2'b00;
 				outPC = 1'b0;
-	end
-	end
-	else if(opcode1 === `B_TYPE)
-	begin
-		begin
-	if (opcode2 === `R_TYPE || opcode2 === `I_TYPE || opcode2 === `L_TYPE || opcode2 === `JAL || opcode2 === `JALR || opcode2 === `LUI || opcode2 === `AUIPC || opcode2 === 7'd0)
-		begin
-			if (opcode3 === `L_TYPE || opcode3 === `R_TYPE || opcode3 === `I_TYPE|| opcode3 === `JALR || opcode3 === `LUI || opcode3 === `AUIPC)
-			begin
-				if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst2) && (rs1_inst1 === rs2_inst1))				// =
-				begin
-					outI = 1'b0;
-					outA = 2'b10;
-					outB = 2'b10;
-				end
-				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst3) && (rs1_inst1 === rs2_inst1))			// =
-				begin
-					outI = 1'b0;
-					outA = 2'b01;
-					outB = 2'b01;
-				end
-				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b10;
-					outB = 2'b00;
-				end
-				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 !== rd_inst2)&&(rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b01;
-					outB = 2'b00;
-				end
-				else if ((rs2_inst1 === rd_inst2) && (rs1_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b10;
-				end
-				else if ((rs2_inst1 === rd_inst3) && (rs1_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b01;
-				end
-				else if ((rs2_inst1 === rd_inst3) && (rs2_inst1 === rd_inst2) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b01;
-					outB = 2'b01;
-				end
-				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst3) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b10;
-					outB = 2'b01;
-				end
-				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst2) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b01;
-					outB = 2'b10;
-				end
-				else
-				begin
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b00;
-				end
-			end
-			else if(opcode3 === `S_TYPE || opcode3 === `B_TYPE || opcode3 === 7'b0000000 || opcode3 === `JAL )
-			begin
-				if ((rs1_inst1 === rd_inst2) && (rs2_inst1 !== rd_inst2) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b10;
-					outB = 2'b00;
-				end
-				else if ((rs2_inst1 === rd_inst2) && (rs1_inst1 !== rd_inst2) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b10;
-				end
-				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst2) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b10;
-					outB = 2'b10;
-				end
-				else
-				begin
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b00;
-				end
-			end
-			else stall = 1'b1;
-		end
-	else if (opcode2 === `S_TYPE || opcode2 === `B_TYPE)
-		begin
-			if(opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `JAL || opcode3 === `JALR || opcode3 === `LUI || opcode3 === `AUIPC)
-				begin
-				if ((rs1_inst1 === rd_inst3) && (rs2_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b01;
-					outB = 2'b00;
-				end
-				else if ((rs2_inst1 === rd_inst3) && (rs1_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b01;
-					outB = 2'b00;
-				end
-				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst3) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b01;
-					outB = 2'b01;
-				end
-			else if (opcode3 === 7'b0000000)
-				begin	
-					if ((rs1_inst1 === rd_inst2) && (rs2_inst1 !== rd_inst2) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b10;
-					outB = 2'b00;
-				end
-				else if ((rs2_inst1 === rd_inst2) && (rs1_inst1 !== rd_inst2) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b10;
-				end
-				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst2) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b10;
-					outB = 2'b10;
-				end
-			else
-				begin
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b00;
-				end
 			end
 		end
 		else
-			begin
-					outI = 1'b0;
-				outA = 2'b00;
-					outB = 2'b00;
-			end
+		begin		
+			outI = 1'b0;		
+			outA = 2'b00;
+			outB = 2'b00;
+			outC1 = 2'b00;
+			outC2 = 2'b00;
+			outD = 2'b00;
+			outPC = 1'b0;
 		end
 	end
+	else if(opcode1 === `B_TYPE)
+	begin
+		if (opcode2 === `R_TYPE || opcode2 === `I_TYPE || opcode2 === `L_TYPE || opcode2 === `JAL || opcode2 === `JALR || opcode2 === `LUI || opcode2 === `AUIPC)
 		begin
-		if(type ===`BEQ)
+			if (opcode3 === `L_TYPE || opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `JALR || opcode3 === `LUI || opcode3 === `AUIPC || opcode3 === `JAL)
 			begin
-			if (BrEq === 1'b1)
-					begin
-					outC1 = 2'b00;
-					outC2 = 2'b11;
-					outC3 = 2'b11;
-					outPC = 1'b1;			
-					end
-				else 
-					begin
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outC3 = 2'b00;
-					outPC = 1'b0;
-					end
+				if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst2) && (rd_inst2 !== `REG0))				// =
+				begin
+					outI = 1'b0;
+					outA = 2'b10;
+					outB = 2'b10;
+				end
+				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst3) && (rd_inst3 !== `REG0) && (rd_inst3 !== rd_inst2))			// =
+				begin
+					outI = 1'b0;
+					outA = 2'b01;
+					outB = 2'b01;
+				end
+				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 !== rd_inst2) && (rs2_inst1 !== rd_inst3) && (rd_inst2 !== `REG0))
+				begin
+					outI = 1'b0;
+					outA = 2'b10;
+					outB = 2'b00;
+				end
+				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 !== rd_inst2) && (rs2_inst1 !== rd_inst3) && (rd_inst2 !== rd_inst3) && (rd_inst3 !== `REG0))
+				begin
+					outI = 1'b0;
+					outA = 2'b01;
+					outB = 2'b00;
+				end
+				else if ((rs2_inst1 === rd_inst2) && (rs1_inst1 !== rd_inst2) && (rs1_inst1 !== rd_inst3) && (rd_inst2 !== `REG0))
+				begin
+					outI = 1'b0;
+					outA = 2'b00;
+					outB = 2'b10;
+				end
+				else if ((rs2_inst1 === rd_inst3) && (rs1_inst1 !== rd_inst2) && (rs1_inst1 !== rd_inst3) && (rd_inst2 !== rd_inst3) && (rd_inst3 !== `REG0))
+				begin
+					outI = 1'b0;
+					outA = 2'b00;
+					outB = 2'b01;
+				end
+				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst2) && (rd_inst2 !== rd_inst3) && (rd_inst2 !== `REG0) && (rd_inst3 !== `REG0))
+				begin
+					outI = 1'b0;
+					outA = 2'b01;
+					outB = 2'b10;
+				end
+				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst3) && (rd_inst2 !== rd_inst3) && (rd_inst2 !== `REG0) && (rd_inst3 !== `REG0))
+				begin
+					outI = 1'b0;
+					outA = 2'b10;
+					outB = 2'b01;
+				end
+				else
+				begin
+					outI = 1'b0;
+					outA = 2'b00;
+					outB = 2'b00;
+				end
+			end
+			else if(opcode3 === `S_TYPE || opcode3 === `B_TYPE || opcode3 === 7'd0)
+			begin
+				if ((rs1_inst1 === rd_inst2) && (rs2_inst1 !== rd_inst2) && (rd_inst2 !== `REG0))
+				begin
+					outI = 1'b0;
+					outA = 2'b10;
+					outB = 2'b00;
+				end
+				else if ((rs2_inst1 === rd_inst2) && (rs1_inst1 !== rd_inst2) && (rd_inst2 !== `REG0))
+				begin
+					outI = 1'b0;
+					outA = 2'b00;
+					outB = 2'b10;
+				end
+				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst2) && (rd_inst2 !== `REG0))
+				begin
+					outI = 1'b0;
+					outA = 2'b10;
+					outB = 2'b10;
+				end
+				else
+				begin
+					outI = 1'b0;
+					outA = 2'b00;
+					outB = 2'b00;
+				end
+			end
+			else 
+			begin
+				outI = 1'b0;
+				outA = 2'b00;
+				outB = 2'b00;
+			end
 		end
-		else if (type === `BNE)
+		else if (opcode2 === `S_TYPE || opcode2 === `B_TYPE || opcode2 === 7'd0)
 		begin
-			if(BrEq === 1'b0)	
+			if(opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `JAL || opcode3 === `JALR || opcode3 === `LUI || opcode3 === `AUIPC || opcode3 === `L_TYPE)
+			begin
+				if ((rs1_inst1 === rd_inst3) && (rs2_inst1 !== rd_inst3) && (rd_inst3 !== `REG0))
 				begin
-					outC1 = 2'b00;
-					outC2 = 2'b11;
-					outC3 = 2'b11;
-					outPC = 1'b1;
+					outI = 1'b0;
+					outA = 2'b01;
+					outB = 2'b00;
 				end
+				else if ((rs2_inst1 === rd_inst3) && (rs1_inst1 !== rd_inst3) && (rd_inst3 !== `REG0))
+				begin
+					outI = 1'b0;
+					outA = 2'b00;
+					outB = 2'b01;
+				end
+				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst3) && (rd_inst3 !== `REG0))
+				begin
+					outI = 1'b0;
+					outA = 2'b01;
+					outB = 2'b01;
+				end
+				else				
+				begin
+					outI = 1'b0;
+					outA = 2'b00;
+					outB = 2'b00;
+				end
+			end
 			else
-				begin
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outC3 = 2'b00;
-					outPC = 1'b0;
-				end
+			begin
+				outI = 1'b0;
+				outA = 2'b00;
+				outB = 2'b00;
+			end
+		end
+		else
+		begin
+			outI = 1'b0;
+			outA = 2'b00;
+			outB = 2'b00;
+		end
+		
+		if(type ===`BEQ)			
+		begin
+			if (BrEq === 1'b1)		//TAKEN
+			begin
+				outC1 = 2'b11;
+				outC2 = 2'b11;
+				outC3 = 2'b00;
+				outPC = 1'b1;			
+			end
+			else 				//NOT TAKEN
+			begin
+				outC1 = 2'b00;
+				outC2 = 2'b00;
+				outC3 = 2'b00;
+				outPC = 1'b0;
+			end
+		end
+		else if (type === `BNE)			
+		begin
+			if(BrEq === 1'b0)		//TAKEN
+			begin
+				outC1 = 2'b11;
+				outC2 = 2'b11;
+				outC3 = 2'b00;
+				outPC = 1'b1;
+			end
+			else				//NOT TAKEN
+			begin
+				outC1 = 2'b00;
+				outC2 = 2'b00;
+				outC3 = 2'b00;
+				outPC = 1'b0;
+			end
 		end
 		else if( type === `BLT || type === `BLTU)
 		begin
-			if( BrLT === 1'b1)
+			if( BrLT === 1'b1)		//TAKEN
 			begin
-					outC1 = 2'b00;
-					outC2 = 2'b11;
-					outC3 = 2'b11;
-					outPC = 1'b1;
+				outC1 = 2'b11;
+				outC2 = 2'b11;
+				outC3 = 2'b00;
+				outPC = 1'b1;
 			end
-			else
-				begin
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outC3 = 2'b00;
-					outPC = 1'b0;
-				end
+			else				//NOT TAKEN
+			begin
+				outC1 = 2'b00;
+				outC2 = 2'b00;
+				outC3 = 2'b00;
+				outPC = 1'b0;
+			end
 		end
 		else if (type === `BGE || type === `BGEU)
 		begin
-			if (BrLT === 1'b0)
-					outC1 = 2'b00;
-					outC2 = 2'b11;
-					outC3 = 2'b11;
-					outPC = 1'b1;
-				end
-	
-			else
-				begin
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outC3 = 2'b00;
-					outPC = 1'b0;
-				end
+			if (BrLT === 1'b0)		//TAKEN
+			begin
+				outC1 = 2'b11;
+				outC2 = 2'b11;
+				outC3 = 2'b00;
+				outPC = 1'b1;
+			end
+			else				//NOT TAKEN
+			begin
+				outC1 = 2'b00;
+				outC2 = 2'b00;
+				outC3 = 2'b00;
+				outPC = 1'b0;
+			end
 		end
 	end
 	else if(opcode1 === `L_TYPE)
 	begin
 		if (opcode0 === `R_TYPE || opcode0 === `B_TYPE || opcode0 === `S_TYPE)
+		begin
+			if(((rs2_inst0 === rd_inst1) || (rs1_inst0 === rd_inst1)) && (rd_inst1 !== `REG0)) 
 			begin
-				if( rs2_inst0 === rd_inst1 || rs1_inst0 === rd_inst1 ) 
-				begin
-					outI = 1'b1;
-					outA = 2'b00;
-					outB = 2'b00;
-					outC1 = 2'b10;
-					outC2 = 2'b11;
-					outC3 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-				end
-				else
-				begin
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outC3 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-				end
+				outI = 1'b1;
+				outA = 2'b00;
+				outB = 2'b00;
+				outC1 = 2'b10;
+				outC2 = 2'b10;
+				outC3 = 2'b00;
+				outD = 2'b00;
+				outPC = 1'b0;
 			end
+			else
+			begin
+				outI = 1'b0;
+				outA = 2'b00;
+				outB = 2'b00;
+				outC1 = 2'b00;
+				outC2 = 2'b00;
+				outC3 = 2'b00;
+				outD = 2'b00;
+				outPC = 1'b0;
+			end
+		end
 		else if(opcode0 === `I_TYPE || opcode0 === `JAL || opcode0 === `JALR)
+		begin
+			if((rd_inst1 === rs1_inst0) && (rd_inst1 !== `REG0))
 			begin
-				if(rd_inst1 === rs1_inst0)
-				begin
-					outI = 1'b1;
-					outA = 2'b00;
-					outB = 2'b00;
-					outC1 = 2'b10;
-					outC2 = 2'b11;
-					outC3 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-				end
-				else
-				begin
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outC3 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-				end
+				outI = 1'b1;
+				outA = 2'b00;
+				outB = 2'b00;
+				outC1 = 2'b10;
+				outC2 = 2'b10;
+				outC3 = 2'b00;
+				outD = 2'b00;
+				outPC = 1'b0;
 			end
-		else 
+			else
 			begin
+				outI = 1'b0;
+				outA = 2'b00;
+				outB = 2'b00;
+				outC1 = 2'b00;
+				outC2 = 2'b00;
+				outC3 = 2'b00;
+				outD = 2'b00;
+				outPC = 1'b0;
+			end
+		end
+		else 
+		begin
 			outI = 1'b0;
 			outA = 2'b00;
 			outB = 2'b00;
@@ -464,334 +435,238 @@ begin
 			outC3 = 2'b00;
 			outD = 2'b00;
 			outPC = 1'b0;
-			end
+		end
 		
 	end
 	else if(opcode1 === `JAL)
 	begin 
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outPC = 1'b1;
-					outC2  = 2'b11;
-					outD = 2'b00;
+		outI = 1'b0;
+		outA = 2'b00;
+		outB = 2'b00;
+		outC1 = 2'b11;
+		outPC = 1'b1;
+		outC2 = 2'b11;
+		outC3 = 2'b00;
+		outD = 2'b00;
 	end
 	
 	else if(opcode1 === `JALR)
 	begin
 		if (opcode2 === `R_TYPE || opcode2 === `I_TYPE || opcode2 === `L_TYPE || opcode2 === `JAL || opcode2 === `JALR || opcode2 === `LUI || opcode2 === `AUIPC)
 		begin
-			if (opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `JAL || opcode3 === `JALR || opcode3 === `LUI || opcode3 === `AUIPC|| opcode3 === 7'b0000000)
+			if (opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `JAL || opcode3 === `JALR || opcode3 === `LUI || opcode3 === `AUIPC || opcode3 === `L_TYPE)
 			begin
-				if (rs1_inst1 === rd_inst2)
-					begin
+				if ((rs1_inst1 === rd_inst2) && (rd_inst2 !== `REG0))
+				begin
 					outI = 1'b0;
 					outA = 2'b10;
 					outB = 2'b00;
-					outC1 = 2'b00;
+					outC1 = 2'b11;
 					outD = 2'b00;
 					outC2 = 2'b11;
 					outPC = 1'b1;
-					end
-				else if(rs1_inst1 === rd_inst3)
-					begin
+				end
+				else if ((rs1_inst1 === rd_inst3) && (rd_inst2 !== rd_inst3) && (rd_inst3 !== `REG0))
+				begin
 					outI = 1'b0;
 					outA = 2'b01;
 					outB = 2'b00;
 					outC2 = 2'b11;
-					outC1 = 2'b00;
+					outC1 = 2'b11;
+					outC3 = 2'b00;
 					outD = 2'b00;
 					outPC = 1'b1;
-					end
+				end
 				else
-					begin
+				begin
 					outI = 1'b0;
 					outA = 2'b00;
 					outB = 2'b00;
-					outC1 = 2'b00;
+					outC1 = 2'b11;
 					outC2 = 2'b11;
+					outC3 = 2'b00;
 					outD = 2'b00;
 					outPC = 1'b1;
-					end
+				end
 			end
-			else if	(opcode3 === `S_TYPE || opcode3 === `B_TYPE|| opcode3 === 7'b0000000)
+			else if	(opcode3 === `S_TYPE || opcode3 === `B_TYPE || opcode3 === 7'd0)
 			begin
-				if (rs1_inst1 === rd_inst2)
-					begin
+				if ((rs1_inst1 === rd_inst2) && (rd_inst2 !== `REG0))
+				begin
 					outI = 1'b0;
 					outA = 2'b10;
 					outB = 2'b00;
-					outC1 = 2'b00;
+					outC1 = 2'b11;
 					outC2 = 2'b11;
 					outD = 2'b00;
 					outPC = 1'b1;
-					end
+				end
 				else 		
-					begin
+				begin
 					outI = 1'b0;
 					outA = 2'b00;
 					outB = 2'b00;
-					outC1 = 2'b00;
+					outC1 = 2'b11;
 					outC2 = 2'b11;
 					outD = 2'b00;
 					outPC = 1'b1;
-					end
+				end
 			end
 			else
-				begin	
+			begin	
 				outI = 1'b0;
 				outA = 2'b00;
 				outB = 2'b00;
-				outC1 = 2'b00;
+				outC1 = 2'b11;
 				outC2 = 2'b11;
 				outD = 2'b00;
 				outPC = 1'b1;
-				end
+			end
 		end
-		else if (opcode2 === `S_TYPE || opcode2 === `B_TYPE)
+		else if (opcode2 === `S_TYPE || opcode2 === `B_TYPE || opcode2 === 7'd0)
 		begin
-			if (opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `L_TYPE || opcode3 === `JAL || opcode3 === `JALR || opcode3 === `LUI || opcode3 === `AUIPC|| opcode3 === 7'b0000000)
+			if (opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `L_TYPE || opcode3 === `JAL || opcode3 === `JALR || opcode3 === `LUI || opcode3 === `AUIPC)
 			begin
-				if(rs1_inst1 === rd_inst3)
+				if((rs1_inst1 === rd_inst3) && (rd_inst3 !== `REG0))
 				begin
 					outI = 1'b0;
-				outA = 2'b01;
-				outB = 2'b00;
-				outC1 = 2'b00;
-				outD = 2'b00;
-				outC2 = 2'b11;
-				outPC = 1'b1;
+					outA = 2'b01;
+					outB = 2'b00;
+					outC1 = 2'b11;
+					outD = 2'b00;
+					outC2 = 2'b11;
+					outPC = 1'b1;
 				end
-			else 
+				else 
 				begin
 					outI = 1'b0;
+					outA = 2'b00;
+					outB = 2'b00;
+					outC1 = 2'b11;
+					outC2 = 2'b11;
+					outD = 2'b00;
+					outPC = 1'b1;
+				end
+			end
+			else
+			begin		
+				outI = 1'b0;		
 				outA = 2'b00;
 				outB = 2'b00;
-				outC1 = 2'b00;
-				outC2 = 2'b11;
+				outC1 = 2'b11;
+				outC1 = 2'b11;
 				outD = 2'b00;
 				outPC = 1'b1;
-				end
 			end
 		end
 		else
 		begin		
-					outI = 1'b0;		
-		outA = 2'b00;
-		outB = 2'b00;
-		outC1 = 2'b00;
-		outC1 = 2'b11;
-		outD = 2'b00;
-		outPC = 1'b1;
+			outI = 1'b0;		
+			outA = 2'b00;
+			outB = 2'b00;
+			outC1 = 2'b11;
+			outC1 = 2'b11;
+			outD = 2'b00;
+			outPC = 1'b1;
 		end
 	end
-	else if (opcode1 === `S_TYPE)
+	else if (opcode1 === `S_TYPE || opcode1 === `R_TYPE)
 	begin
 		if (opcode2 === `R_TYPE || opcode2 === `I_TYPE || opcode2 === `L_TYPE || opcode2 === `JAL || opcode2 === `JALR || opcode2 === `LUI || opcode2 === `AUIPC)
 		begin
-			if (opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `JAL || opcode3 === `JALR || opcode3 === `LUI || opcode3 === `AUIPC || opcode3 === 7'b0000000)
+			if (opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `JAL || opcode3 === `JALR || opcode3 === `LUI || opcode3 === `AUIPC || opcode3 === `L_TYPE)
 			begin
-				if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst2) && (rs1_inst1 === rs2_inst1))				// =
-				begin
-					outI = 1'b0;
-					outA = 2'b10;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b10;
-					outPC = 1'b0;
-				end
-				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst3) && (rs1_inst1 === rs2_inst1))			// =
-				begin
-					outI = 1'b0;
-					outA = 2'b01;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b01;
-					outPC = 1'b0;
-				end
-				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b10;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-				end
-				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 !== rd_inst2)&&(rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b01;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-				end
-				else if ((rs2_inst1 === rd_inst2) && (rs1_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b10;
-					outPC = 1'b0;
-				end
-				else if ((rs2_inst1 === rd_inst3) && (rs2_inst1 === rd_inst2) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b01;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b01; 
-					outPC = 1'b0;
-				end
-				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst3) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b10;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b01;
-					outPC = 1'b0;
-				end
-				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst2) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b01;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b10;
-					outPC = 1'b0;
-				end
-				else
-				begin
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-				end
-			end
-			else if(opcode3 === `S_TYPE || opcode3 === `B_TYPE || opcode3 === 7'b0000000)
-			begin
-				if ((rs1_inst1 === rd_inst2) && (rs2_inst1 !== rd_inst2) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b10;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-				end
-				else if ((rs2_inst1 === rd_inst2) && (rs1_inst1 !== rd_inst2) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b10;
-					outPC = 1'b0;
-				end
-				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst2) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b10;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b10;
-					outPC = 1'b0;
-				end
-				else
-				begin
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-				end
-			end
-			else stall = 1'b1;
-		end
-		else if (opcode2 === `S_TYPE || opcode2 === `B_TYPE)
-		begin
-			if(opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `JAL || opcode3 === `JALR || opcode3 === `LUI || opcode3 === `AUIPC|| opcode3 === 7'b0000000)
-				begin
-				if ((rs1_inst1 === rd_inst3) && (rs2_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b01;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-				end
-				else if ((rs2_inst1 === rd_inst3) && (rs1_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b01;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-				end
-				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst3) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b01;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b01;
-					outPC = 1'b0;
-				end
-				else
-				begin
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-				end
-				end
-		end
-		else
-			begin
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-			end
-		end
-	else if (opcode1 === `R_TYPE || opcode1 === `JALR || opcode1 === `LUI || opcode1 === `AUIPC)
-	begin
-		if (opcode2 === `R_TYPE || opcode2 === `I_TYPE || opcode2 === `L_TYPE || opcode2 === `JAL || opcode2 === `JALR || opcode2 === `LUI || opcode2 === `AUIPC)
-		begin
-			if (opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `JAL || opcode3 === `JALR || opcode3 === `LUI || opcode3 === `AUIPC)
-			begin
-				if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst2) && (rs1_inst1 === rs2_inst1))				// =
+//				if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst2) && (rs1_inst1 === rs2_inst1))				// =
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b10;
+//					outB = 2'b00;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b10;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst3) && (rs1_inst1 === rs2_inst1))			// =
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b01;
+//					outB = 2'b00;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b01;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b10;
+//					outB = 2'b00;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 !== rd_inst2)&&(rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b01;
+//					outB = 2'b00;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs2_inst1 === rd_inst2) && (rs1_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b00;
+//					outB = 2'b00;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b10;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs2_inst1 === rd_inst3) && (rs2_inst1 === rd_inst2) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b01;
+//					outB = 2'b00;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b01; 
+//					outPC = 1'b0;
+//				end
+//				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst3) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b10;
+//					outB = 2'b00;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b01;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst2) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b01;
+//					outB = 2'b00;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b10;
+//					outPC = 1'b0;
+//				end
+//				else
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b00;
+//					outB = 2'b00;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+				if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst2) && (rd_inst2 !== `REG0))				// =
 				begin
 					outI = 1'b0;
 					outA = 2'b10;
@@ -801,7 +676,7 @@ begin
 					outD = 2'b00;
 					outPC = 1'b0;
 				end
-				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst3) && (rs1_inst1 === rs2_inst1))			// =
+				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst3) && (rd_inst3 !== `REG0) && (rd_inst3 !== rd_inst2))			// =
 				begin
 					outI = 1'b0;
 					outA = 2'b01;
@@ -811,7 +686,7 @@ begin
 					outD = 2'b00;
 					outPC = 1'b0;
 				end
-				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
+				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 !== rd_inst2) && (rs2_inst1 !== rd_inst3) && (rd_inst2 !== `REG0))
 				begin
 					outI = 1'b0;
 					outA = 2'b10;
@@ -821,7 +696,7 @@ begin
 					outD = 2'b00;
 					outPC = 1'b0;
 				end
-				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 !== rd_inst2)&&(rs1_inst1 !== rs2_inst1))
+				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 !== rd_inst2) && (rs2_inst1 !== rd_inst3) && (rd_inst2 !== rd_inst3) && (rd_inst3 !== `REG0))
 				begin
 					outI = 1'b0;
 					outA = 2'b01;
@@ -831,7 +706,7 @@ begin
 					outD = 2'b00;
 					outPC = 1'b0;
 				end
-				else if ((rs2_inst1 === rd_inst2) && (rs1_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
+				else if ((rs2_inst1 === rd_inst2) && (rs1_inst1 !== rd_inst2) && (rs1_inst1 !== rd_inst3) && (rd_inst2 !== `REG0))
 				begin
 					outI = 1'b0;
 					outA = 2'b00;
@@ -841,7 +716,7 @@ begin
 					outD = 2'b00;
 					outPC = 1'b0;
 				end
-				else if ((rs2_inst1 === rd_inst3) && (rs1_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
+				else if ((rs2_inst1 === rd_inst3) && (rs1_inst1 !== rd_inst2) && (rs1_inst1 !== rd_inst3) && (rd_inst2 !== rd_inst3) && (rd_inst3 !== `REG0))
 				begin
 					outI = 1'b0;
 					outA = 2'b00;
@@ -851,31 +726,21 @@ begin
 					outD = 2'b00;
 					outPC = 1'b0;
 				end
-				else if ((rs2_inst1 === rd_inst3) && (rs2_inst1 === rd_inst2) && (rs1_inst1 !== rs2_inst1))
+				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst2) && (rd_inst2 !== rd_inst3) && (rd_inst2 !== `REG0) && (rd_inst3 !== `REG0))
 				begin
 					outI = 1'b0;
 					outA = 2'b01;
-					outB = 2'b01;
+					outB = 2'b10;
 					outC1 = 2'b00;
 					outC2 = 2'b00;
 					outD = 2'b00;
 					outPC = 1'b0;
 				end
-				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst3) && (rs1_inst1 !== rs2_inst1))
+				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst3) && (rd_inst2 !== rd_inst3) && (rd_inst2 !== `REG0) && (rd_inst3 !== `REG0))
 				begin
 					outI = 1'b0;
 					outA = 2'b10;
 					outB = 2'b01;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-				end
-				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst2) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b01;
-					outB = 2'b10;
 					outC1 = 2'b00;
 					outC2 = 2'b00;
 					outD = 2'b00;
@@ -894,7 +759,7 @@ begin
 			end
 			else if(opcode3 === `S_TYPE || opcode3 === `B_TYPE || opcode3 === 7'b0000000)
 			begin
-				if ((rs1_inst1 === rd_inst2) && (rs2_inst1 !== rd_inst2) && (rs1_inst1 !== rs2_inst1))
+				if ((rs1_inst1 === rd_inst2) && (rs2_inst1 !== rd_inst2) && (rd_inst2 !== `REG0))
 				begin
 					outI = 1'b0;
 					outA = 2'b10;
@@ -904,24 +769,24 @@ begin
 					outD = 2'b00;
 					outPC = 1'b0;
 				end
-				else if ((rs2_inst1 === rd_inst2) && (rs1_inst1 !== rd_inst2) && (rs1_inst1 !== rs2_inst1))
+				else if ((rs2_inst1 === rd_inst2) && (rs1_inst1 !== rd_inst2) && (rd_inst2 !== `REG0))
 				begin
 					outI = 1'b0;
 					outA = 2'b00;
 					outB = 2'b10;
 					outC1 = 2'b00;
 					outC2 = 2'b00;
-					outD = 2'b00;
+					outD = 2'b10;
 					outPC = 1'b0;
 				end
-				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst2) && (rs1_inst1 !== rs2_inst1))
+				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst2) && (rd_inst2 !== `REG0))
 				begin
 					outI = 1'b0;
 					outA = 2'b10;
 					outB = 2'b10;
 					outC1 = 2'b00;
 					outC2 = 2'b00;
-					outD = 2'b00;
+					outD = 2'b10;
 					outPC = 1'b0;
 				end
 				else
@@ -935,23 +800,22 @@ begin
 					outPC = 1'b0;
 				end
 			end
-			else stall = 1'b1;
+			else 
+			begin
+				outI = 1'b0;
+				outA = 2'b00;
+				outB = 2'b00;
+				outC1 = 2'b00;
+				outC2 = 2'b00;
+				outD = 2'b00;
+				outPC = 1'b0;
+			end
 		end
-		else if (opcode2 === `S_TYPE || opcode2 === `B_TYPE)
+		else if (opcode2 === `S_TYPE || opcode2 === `B_TYPE || opcode2 === 7'd0)
 		begin
-			if(opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `JAL || opcode3 === `JALR || opcode3 === `LUI || opcode3 === `AUIPC)
-				begin
-				if ((rs1_inst1 === rd_inst3) && (rs2_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b01;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-				end
-				else if ((rs2_inst1 === rd_inst3) && (rs1_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
+			if(opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `JAL || opcode3 === `JALR || opcode3 === `LUI || opcode3 === `AUIPC|| opcode3 === `L_TYPE)
+			begin
+				if ((rs1_inst1 === rd_inst3) && (rs2_inst1 !== rd_inst3) && (rd_inst3 !== `REG0))
 				begin
 					outI = 1'b0;
 					outA = 2'b01;
@@ -961,62 +825,50 @@ begin
 					outD = 2'b00;
 					outPC = 1'b0;
 				end
-				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst3) && (rs1_inst1 !== rs2_inst1))
+				else if ((rs2_inst1 === rd_inst3) && (rs1_inst1 !== rd_inst3) && (rd_inst3 !== `REG0))
 				begin
 					outI = 1'b0;
-					outA = 2'b01;
+					outA = 2'b00;
 					outB = 2'b01;
 					outC1 = 2'b00;
 					outC2 = 2'b00;
 					outD = 2'b00;
 					outPC = 1'b0;
 				end
-			else if (opcode3 === 7'b0000000)
-				begin	
-					if ((rs1_inst1 === rd_inst2) && (rs2_inst1 !== rd_inst2) && (rs1_inst1 !== rs2_inst1))
+				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst3) && (rd_inst3 !== `REG0))
 				begin
 					outI = 1'b0;
-					outA = 2'b10;
+					outA = 2'b01;
+					outB = 2'b01;
+					outC1 = 2'b00;
+					outC2 = 2'b00;
+					outD = 2'b01;
+					outPC = 1'b0;
+				end
+				else
+				begin
+					outI = 1'b0;
+					outA = 2'b00;
 					outB = 2'b00;
 					outC1 = 2'b00;
 					outC2 = 2'b00;
 					outD = 2'b00;
 					outPC = 1'b0;
 				end
-				else if ((rs2_inst1 === rd_inst2) && (rs1_inst1 !== rd_inst2) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b10;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-				end
-				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst2) && (rs1_inst1 !== rs2_inst1))
-				begin
-					outI = 1'b0;
-					outA = 2'b10;
-					outB = 2'b10;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-				end
+			end
 			else
-				begin
-					outI = 1'b0;
-					outA = 2'b00;
-					outB = 2'b00;
-					outC1 = 2'b00;
-					outC2 = 2'b00;
-					outD = 2'b00;
-					outPC = 1'b0;
-				end
+			begin
+				outI = 1'b0;
+				outA = 2'b00;
+				outB = 2'b00;
+				outC1 = 2'b00;
+				outC2 = 2'b00;
+				outD = 2'b00;
+				outPC = 1'b0;
 			end
 		end
 		else
-			begin
+		begin
 			outI = 1'b0;
 			outA = 2'b00;
 			outB = 2'b00;
@@ -1024,46 +876,287 @@ begin
 			outC2 = 2'b00;
 			outD = 2'b00;
 			outPC = 1'b0;
-			end
 		end
 	end
-	else if(opcode1 === 7'd0)
-	begin
-		if(opcode2 === `JAL || opcode2 === `B_TYPE)
-			if( opcode3 === `L_TYPE)
-			begin
-				outI = 1'b1;
-				outA = 2'b00;
-				outB = 2'b00;
-				outC1 = 2'b00;
-				outC2 = 2'b00;
-				outC3 = 2'b00;
-				outD = 2'b00;
-				outPC = 1'b0;
-			end
-			else
-			begin
-				outI = 1'b0;
-				outA = 2'b00;
-				outB = 2'b00;
-				outC1 = 2'b00;
-				outC2 = 2'b00;
-				outC3 = 2'b00;
-				outD = 2'b00;
-				outPC = 1'b0;
-			end
-		else
-			begin
-				outI = 1'b0;
-				outA = 2'b00;
-				outB = 2'b00;
-				outC1 = 2'b00;
-				outC2 = 2'b00;
-				outC3 = 2'b00;
-				outD = 2'b00;
-				outPC = 1'b0;
-			end
-	end
+//	else if (opcode1 === `R_TYPE || opcode1 === `JALR || opcode1 === `LUI || opcode1 === `AUIPC)
+//	begin
+//		if (opcode2 === `R_TYPE || opcode2 === `I_TYPE || opcode2 === `L_TYPE || opcode2 === `JAL || opcode2 === `JALR || opcode2 === `LUI || opcode2 === `AUIPC)
+//		begin
+//			if (opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `JAL || opcode3 === `JALR || opcode3 === `LUI || opcode3 === `AUIPC)
+//			begin
+//				if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst2) && (rs1_inst1 === rs2_inst1))				// =
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b10;
+//					outB = 2'b10;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst3) && (rs1_inst1 === rs2_inst1))			// =
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b01;
+//					outB = 2'b01;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b10;
+//					outB = 2'b00;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 !== rd_inst2)&&(rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b01;
+//					outB = 2'b00;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs2_inst1 === rd_inst2) && (rs1_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b00;
+//					outB = 2'b10;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs2_inst1 === rd_inst3) && (rs1_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b00;
+//					outB = 2'b01;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs2_inst1 === rd_inst3) && (rs2_inst1 === rd_inst2) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b01;
+//					outB = 2'b01;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst3) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b10;
+//					outB = 2'b01;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst2) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b01;
+//					outB = 2'b10;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//				else
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b00;
+//					outB = 2'b00;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//			end
+//			else if(opcode3 === `S_TYPE || opcode3 === `B_TYPE || opcode3 === 7'b0000000)
+//			begin
+//				if ((rs1_inst1 === rd_inst2) && (rs2_inst1 !== rd_inst2) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b10;
+//					outB = 2'b00;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs2_inst1 === rd_inst2) && (rs1_inst1 !== rd_inst2) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b00;
+//					outB = 2'b10;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst2) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b10;
+//					outB = 2'b10;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//				else
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b00;
+//					outB = 2'b00;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//			end
+//			else stall = 1'b1;
+//		end
+//		else if (opcode2 === `S_TYPE || opcode2 === `B_TYPE)
+//		begin
+//			if(opcode3 === `R_TYPE || opcode3 === `I_TYPE || opcode3 === `JAL || opcode3 === `JALR || opcode3 === `LUI || opcode3 === `AUIPC)
+//				begin
+//				if ((rs1_inst1 === rd_inst3) && (rs2_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b01;
+//					outB = 2'b00;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs2_inst1 === rd_inst3) && (rs1_inst1 !== rd_inst3) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b01;
+//					outB = 2'b00;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs1_inst1 === rd_inst3) && (rs2_inst1 === rd_inst3) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b01;
+//					outB = 2'b01;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//			else if (opcode3 === 7'b0000000)
+//				begin	
+//					if ((rs1_inst1 === rd_inst2) && (rs2_inst1 !== rd_inst2) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b10;
+//					outB = 2'b00;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs2_inst1 === rd_inst2) && (rs1_inst1 !== rd_inst2) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b00;
+//					outB = 2'b10;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//				else if ((rs1_inst1 === rd_inst2) && (rs2_inst1 === rd_inst2) && (rs1_inst1 !== rs2_inst1))
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b10;
+//					outB = 2'b10;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//			else
+//				begin
+//					outI = 1'b0;
+//					outA = 2'b00;
+//					outB = 2'b00;
+//					outC1 = 2'b00;
+//					outC2 = 2'b00;
+//					outD = 2'b00;
+//					outPC = 1'b0;
+//				end
+//			end
+//		end
+//		else
+//			begin
+//			outI = 1'b0;
+//			outA = 2'b00;
+//			outB = 2'b00;
+//			outC1 = 2'b00;
+//			outC2 = 2'b00;
+//			outD = 2'b00;
+//			outPC = 1'b0;
+//			end
+//		end
+//	end
+//	else if(opcode1 === 7'd0)
+//	begin
+//		if(opcode2 === `JAL || opcode2 === `B_TYPE)
+//			if( opcode3 === `L_TYPE)
+//			begin
+//				outI = 1'b0;
+//				outA = 2'b00;
+//				outB = 2'b00;
+//				outC1 = 2'b00;
+//				outC2 = 2'b00;
+//				outC3 = 2'b00;
+//				outD = 2'b00;
+//				outPC = 1'b0;
+//			end
+//			else
+//			begin
+//				outI = 1'b0;
+//				outA = 2'b00;
+//				outB = 2'b00;
+//				outC1 = 2'b00;
+//				outC2 = 2'b00;
+//				outC3 = 2'b00;
+//				outD = 2'b00;
+//				outPC = 1'b0;
+//			end
+//		else
+//			begin
+//				outI = 1'b0;
+//				outA = 2'b00;
+//				outB = 2'b00;
+//				outC1 = 2'b00;
+//				outC2 = 2'b00;
+//				outC3 = 2'b00;
+//				outD = 2'b00;
+//				outPC = 1'b0;
+//			end
+//	end
 	else
 	begin
 		outI = 1'b0;

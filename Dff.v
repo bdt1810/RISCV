@@ -1,9 +1,10 @@
 module Dff(out, clear, in1, in2, clk);
-	input [31:0] in1;
-	input [31:0] in2;
+	parameter n = 32;
+	input [n-1:0] in1;
+	input [n-1:0] in2;
 	input [1:0] clear; 
 	input clk;
-	output reg[31:0] out;
+	output reg[n-1:0] out;
 
 	initial	
 	begin

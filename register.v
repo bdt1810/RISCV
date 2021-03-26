@@ -4,7 +4,7 @@ input wire[4:0] AddrD,AddrA,AddrB;
 input wire[31:0] DataD;
 input clk;
 input RegWEn;
-output reg[31:0] DataA,DataB;
+output [31:0] DataA,DataB;
 reg [31:0] R [0:31];
 integer i;
 
@@ -16,16 +16,16 @@ end
           
 always @(negedge clk)
 begin
-	if (RegWEn == 1 && AddrD !== 5'h0)                     
+	if (RegWEn === 1 && AddrD !== 5'h0)                     
         begin                     
 		R[AddrD] <= DataD;
         end
 end
 
-	always @(AddrA or AddrB)
-begin
-	DataA <= R[AddrA];
-	DataB <= R[AddrB];
-end
+//	always @(negedge clk)
+//begin
+	assign DataA = R[AddrA];
+	assign DataB = R[AddrB];
+//end
 endmodule
 

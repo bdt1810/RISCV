@@ -12,9 +12,9 @@ module pc (pcout, pcin, sel, clk);
 	begin
 	case(sel)
 	1'b0:
-		pcout <= pcin + 4;
-	1'b1:
 		pcout <= pcin;
+	1'b1:
+		pcout <= pcin - 4;
 	endcase
 	end
 endmodule 

@@ -17,7 +17,7 @@ assign		pWord = PC[19:2];
 assign		pByte = PC[1:0];
 
 initial begin
-	$readmemb("C:/Users/bdt18/OneDrive/Desktop/pltest1.mem",IMEM);
+	$readmemb("C:/Users/bdt18/OneDrive/Desktop/ab.mem",IMEM);
 end
 //
 //always@(posedge clk)

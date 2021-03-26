@@ -1,6 +1,6 @@
-module pattern(predict, addr, past, clk, taken1, inst);
+module pattern(predict, addr, past, taken1, inst);
 input [9:0] addr, past;
-input clk, taken1;
+input taken1;
 input [31:0] inst;
 integer i;
 output predict;

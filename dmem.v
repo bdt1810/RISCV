@@ -4,7 +4,7 @@ module dmem(DataR,MemRW, ALU_Out, DataW, clk );
 	input MemRW, clk;
 	input [n-1:0] ALU_Out;
 	input [n-1:0] DataW;
-	output reg[n-1:0] DataR;
+	output [n-1:0] DataR;
 	reg [n-1:0]DMEM[0:a-1];
 	integer i;
 initial 
@@ -14,17 +14,13 @@ begin
 end
 	always @(posedge clk)
 	begin
-	if (MemRW === 1'b1)
+		if (MemRW === 1'b1)
 		begin
-		DMEM[ALU_Out] <= DataW;
-		end
-	else 
-		begin
-		DataR <= DMEM[ALU_Out];
-		end
+			DMEM[ALU_Out] <= DataW;
+		end 
 	end
 //always @(ALU_Out)
 //begin
-//	DataR <= DMEM[ALU_Out];
+assign	DataR = DMEM[ALU_Out];
 //end
 endmodule
