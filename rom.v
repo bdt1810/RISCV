@@ -257,7 +257,7 @@ module rom11 (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, R
 						Immsel = `SE12_LI;
 						RegWEn = 1'b1;	
 						Asel = `REGISTER;					
-						Bsel = `XOR;	
+						Bsel = `IMM;	
 						ALUsel = `ADD;		
 						MemCtr = 2'b00;
 						MemRW =	`DISABLE;
