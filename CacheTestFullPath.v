@@ -90,6 +90,7 @@ memctr memctr(DataW, MemCtr3, tmp9);
 dmem dmem(DataR, MemRW3,tmp8, DataW, clk );
 memsel memsel(memsel_out, MemSel3, DataR);	
 mux31 mux31(mux31_out, WBSel3, memsel_out, tmp8, tmp7);
+mem_signal mem_signal(tmp10, cs, rd_n, wr_n, be);
 Dff Dff11(DataD, clear, mux31_out, DataD, clk);
 Dff Dff13(tmp12, clear, tmp10, tmp12, clk);
 Dff325 Dff12(AddrD, clear1, tmp10, clk);
