@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
-module CacheTestFullPath1(clk);
-
+module CacheTestFullPath(clk, addr, data);
+output [31:0] addr, data;
 input clk;
 wire outPC;
 wire outI;
@@ -23,7 +23,6 @@ wire[1:0] koplus;
 wire prediction, pprediction;
 wire clear1, PCSelx, true;
 wire V;
-wire[2:0] type;
 wire RegWEn2, BrEq2, BrLT2, PCSel2, BrUn2, ASel2, BSel2, MemRW2;
 wire RegWEn3, BrEq3, BrLT3, PCSel3, BrUn3, ASel3, BSel3, MemRW3;
 wire RegWEn4, BrEq4, BrLT4, PCSel4, BrUn4, ASel4, BSel4, MemRW4;
@@ -37,7 +36,7 @@ assign opcode12 = tmp12[6:0];
 assign V = ~MemRW3;
 
 //Forwarding control logic
-fforwardCtrlab forwardCtrlab(outI, outA, outB, outC1, outC2, outC3, outD, outPC, tmp2, tmp6, tmp10, tmp12, type, BrEq2, BrLT2);
+fforwardCtrlab forwardCtrlab(outI, outA, outB, outC1, outC2, outC3, outD, outPC, tmp2, tmp6, tmp10, tmp12, BrEq2, BrLT2);
 
 //Instruction fetch
 IMEM1 IMEM1(inst, PC, clk); //Out, In
@@ -90,7 +89,8 @@ memctr memctr(DataW, MemCtr3, tmp9);
 dmem dmem(DataR, MemRW3,tmp8, DataW, clk );
 memsel memsel(memsel_out, MemSel3, DataR);	
 mux31 mux31(mux31_out, WBSel3, memsel_out, tmp8, tmp7);
-mem_signal mem_signal(tmp10, cs, rd_n, wr_n, be);
+ramcontrol ramcontrol(tmp10, DataW, tmp8, valid, request, clk, clkram, cs, we_n, re_n, be_n, datao, addro, rflag);
+ramdata ramdata(datai, valid, clkram, rflag, DataR);
 Dff Dff11(DataD, clear, mux31_out, DataD, clk);
 Dff Dff13(tmp12, clear, tmp10, tmp12, clk);
 Dff325 Dff12(AddrD, clear1, tmp10, clk);
@@ -101,6 +101,6 @@ Dff #(9) Dffrom3(instrom4, clear, instrom3,instrom4, clk);
 //Write back
 assign BrEq4 = 1'b0;
 assign BrLT4 = 1'b0;
-rom12 rom4(instrom4, PCSel4, ImmSel4, BrUn4, ASel4, BSel4, ALU_Sel4, MemRW4, RegWEn4, MemSel4, MemCtr4, WBSel4);
+rom11 rom4(instrom4, PCSel4, ImmSel4, BrUn4, ASel4, BSel4, ALU_Sel4, MemRW4, RegWEn4, MemSel4, MemCtr4, WBSel4);
 endmodule
 
