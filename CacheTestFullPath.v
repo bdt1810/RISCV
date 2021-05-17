@@ -1,7 +1,10 @@
 `timescale 1ns/1ns
-module CacheTestFullPath(clk, addr, data);
-output [31:0] addr, data;
-input clk;
+module CacheTestFullPath(clk, clkram, valid, request, datai, cs, we_n, re_n, addro, datao);
+output [31:0] addro;
+output [15:0] datao;
+output cs, we_n, re_n;
+input [15:0] datai;
+input clk, clkram, valid, request;
 wire outPC;
 wire outI;
 wire[6:0] opcode2, opcode6, opcode10, opcode12;
@@ -86,7 +89,7 @@ Dff #(9) Dffrom2(instrom3, clear, instrom2, instrom3, clk);
 //Memory acces
 memctr memctr(DataW, MemCtr3, tmp9);
 //CacheModule1 CacheModule1(clk, tmp8, DataW, V, DataR);
-dmem dmem(DataR, MemRW3,tmp8, DataW, clk );
+//dmem dmem(DataR, MemRW3,tmp8, DataW, clk );
 memsel memsel(memsel_out, MemSel3, DataR);	
 mux31 mux31(mux31_out, WBSel3, memsel_out, tmp8, tmp7);
 ramcontrol ramcontrol(tmp10, DataW, tmp8, valid, request, clk, clkram, cs, we_n, re_n, be_n, datao, addro, rflag);
