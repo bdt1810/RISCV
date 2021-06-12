@@ -3,15 +3,12 @@ input [9:0] addr, past;
 input taken1;
 input [31:0] inst;
 integer i;
-output predict;
-reg [2:0] counter [0:1023];
-assign predict = (counter[addr] >= 4) ? 1'b1: 1'b0;
+output predict; 
+reg [1:0] counter [0:1023];
 initial
 begin
 	for (i=0; i<1024; i=i+1)
-	begin
-		counter[i] <= 3'b111;
-	end
+		counter[i] <= 2'b11;
 end
 always @(*)
 begin
@@ -19,28 +16,27 @@ begin
 	begin
 		if (taken1 === 1'b1)
 		begin
-			case(counter[past])
-			3'b001: counter[past] = 3'b000;
-			3'b010: counter[past] = 3'b001;
-			3'b011: counter[past] = 3'b010;
-			3'b100: counter[past] = 3'b101;
-			3'b101: counter[past] = 3'b110;
-			3'b110: counter[past] = 3'b111;
-			endcase
+			counter[past][0] <= !counter[past][1];
+			counter[past][1] <=  counter[past][1];
+//			case(counter[past])
+//			2'b00: counter[past] = 2'b00;
+//			2'b11: counter[past] = 2'b11;
+//			2'b01: counter[past] = 2'b00;
+//			2'b10: counter[past] = 2'b11;
+//			endcase
 		end
 		else
 		begin
-			case(counter[past])
-			3'b000: counter[past] = 3'b001;
-			3'b001: counter[past] = 3'b010;
-			3'b010: counter[past] = 3'b011;
-			3'b011: counter[past] = 3'b100;
-			3'b100: counter[past] = 3'b011;
-			3'b101: counter[past] = 3'b100;
-			3'b110: counter[past] = 3'b101;
-			3'b111: counter[past] = 3'b110;
-			endcase
+			counter[past][0] <= !counter[past][0];
+			counter[past][1] <= counter[past][0];
+//			case(counter[past])
+//			2'b00: counter[past] = 2'b01;
+//			2'b01: counter[past] = 2'b10;
+//			2'b10: counter[past] = 2'b01;
+//			2'b11: counter[past] = 2'b10;
+//			endcase
 		end
 	end
 end
+assign predict = (counter[addr] >= 2) ? 1'b1: 1'b0;
 endmodule

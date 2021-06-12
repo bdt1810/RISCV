@@ -4,12 +4,10 @@ module ramcontrol(inst, data, addr, valid, request, clk, clkram, cs, we_n, re_n,
 	output reg we_n, re_n;
 	output cs;
 	output [1:0] be_n;
-	output reg [15:0] addro;
+	output reg [24:0] addro;
 	output reg [31:0] datao;
 	output reg [1:0] rflag;
 	reg [1:0] wflag;
-	
-	
 	
 	assign be_n = 2'b00;
 	assign cs = 1'b1;
@@ -19,20 +17,18 @@ module ramcontrol(inst, data, addr, valid, request, clk, clkram, cs, we_n, re_n,
 		rflag <= 2'b00;
 		wflag <= 2'b00;
 	end
+
 	always @(posedge clk)
 	begin
 		if(inst[6:0] === 7'b0000011)
 		begin
 			re_n  <= 1'b0;
 			we_n  <= 1'b1;
-			addro <= {addr[22:0],1'b0};
 		end
 		else if (inst[6:0] === 7'b0100011)
 		begin
 			re_n  <= 1'b1;
 			we_n  <= 1'b0;
-			addro <= {addr[22:0],1'b0};
-			datao <= data[31:16];
 		end 
 		else 
 		begin
@@ -47,32 +43,46 @@ module ramcontrol(inst, data, addr, valid, request, clk, clkram, cs, we_n, re_n,
 		begin
 			if (valid === 1'b1 && inst[6:0] === 7'b0000011)
 			begin
-				rflag <= rflag + 1;
-				addro <= {addr[22:0],1'b1};
+				if (rflag === 2'b00)
+				begin
+					addro <= {addr[23:0],1'b0};
+					rflag <= 2'b01;
+				end
+				else if (rflag === 2'b01)
+				begin
+					addro <= {addr[23:0],1'b1};
+					rflag <= 2'b10;
+				end
+				else	
+					rflag <= rflag;
 			end
-			else if (inst[6:0] === 7'b0100011)
+			else if(we_n === 1'b0)
 			begin
-				wflag <= wflag + 1;
-				addro <= {addr[22:0],1'b1};
-				datao <= data[15:0];
-			end
-			else
+				if (wflag === 2'b00)
+				begin
+					addro <= {addr[23:0],1'b0};
+					datao <= data[31:16];
+					wflag <= 2'b01;
+				end
+				else if (wflag === 2'b01)
+				begin
+					addro <= {addr[23:0],1'b1};
+					datao <= data[15:0];
+					wflag <= 2'b10;
+				end
+				else 
+					wflag <= wflag;
+			end	
+			else 
 			begin
-				re_n  <= 1'b1;
-				we_n  <= 1'b1;
+				rflag <= rflag;
+				wflag <= wflag;
 			end
 		end
-		if (rflag > 2)
+		else 
 		begin
-			re_n <= 1'b1;
-			we_n <= 1'b1;
 			rflag <= 2'b00;
-		end
-		else if (wflag > 2)
-		begin
-			re_n <= 1'b1;
-			we_n <= 1'b1;
 			wflag <= 2'b00;
-		end	
+		end
 	end
 endmodule

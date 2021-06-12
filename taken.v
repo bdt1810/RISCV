@@ -18,6 +18,8 @@ begin
 	else 
 	begin
 		true <= 1'b0;
+		taken1 <= taken1;
+		taken2 <= taken2;
 	end 
 end
 endmodule

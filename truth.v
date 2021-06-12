@@ -37,6 +37,12 @@ begin
 				flush2 <= 2'b00;
 				flush1 <= 2'b00;
 			end
+			default:
+			begin
+				PCsel2 <= PCsel2;
+				flush2 <= flush2;
+				flush1 <= flush1;
+			end
 		endcase
 	end
 	else if (inst[6:0] === 7'b1101111)

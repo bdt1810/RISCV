@@ -279,7 +279,7 @@ module rom11 (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, R
 						WBsel = `ALU2;
 						end
 
-					3'b000:	begin					// ANDI
+					3'b111:	begin					// ANDI
 						BrUN = 1'b0;
 						PCsel = `PC1;
 						Immsel = `SE12_LI;
@@ -694,7 +694,7 @@ module rom11 (ins, BrEq, BrLT, PCsel, Immsel, BrUN, Asel, Bsel, ALUsel, MemRW, R
 
 			`NONE: begin
 				BrUN = 1'b0;
-				PCsel = `SE20_UI;
+				PCsel = `PC1;
 				Immsel = 3'b000;
 				RegWEn = 1'b0;		
 				Asel = 1'b0;					

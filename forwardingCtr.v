@@ -19,12 +19,12 @@
 
 `define REG0 	5'b00000
 
-module fforwardCtrlab(outI, outA, outB, outC1, outC2, outC3, outD, outPC, inst0, inst1, inst2, inst3, type, BrEq, BrLT);
+module fforwardCtrlab(outI, outA, outB, outC1, outC2, outC3, outD, outPC, inst0, inst1, inst2, inst3, BrEq, BrLT);
 input [31:0] inst1, inst2, inst3, inst0;
-input [2:0] type;
 input BrEq, BrLT;
 output reg[1:0] outA, outB, outC1, outC2, outC3, outD;
 output reg outPC, outI;
+wire [2:0] type;
 wire [4:0] rs1_inst1, rs2_inst1, rd_inst2, rd_inst3;
 wire [4:0] rd_inst1, rs1_inst0, rs2_inst0; //for Load instructrion
 wire [6:0] opcode0, opcode1, opcode2, opcode3;

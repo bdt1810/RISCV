@@ -2,7 +2,7 @@ module IMEM1(inst, PC, clk);
 parameter	INST_WIDTH_LENGTH = 32;
 parameter	PC_WIDTH_LENGTH = 32;
 parameter	MEM_WIDTH_LENGTH = 32;
-parameter	MEM_DEPTH = 1<<18;
+parameter	MEM_DEPTH = 1<<9;
 output		[INST_WIDTH_LENGTH-1:0]inst;
 input		[PC_WIDTH_LENGTH-1:0]PC;
 input 		clk;

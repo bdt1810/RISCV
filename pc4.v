@@ -5,6 +5,6 @@ module pc4(pc4, pc_out);
 
 	always @(*)
 	begin
-	assign pc4 = pc_out + 4 ;
+	 pc4 = pc_out + 4 ;
 	end
 endmodule

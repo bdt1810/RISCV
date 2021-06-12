@@ -5,12 +5,12 @@ module branch(BrEq, BrLT, DataA, DataB, BrUn);
 	output reg BrEq, BrLT; 
 	always @(*) begin
 		if (BrUn === 1'b1) begin
-			BrEq = (DataA === DataB) ? 1 : 0;
-			BrLT = (DataA < DataB) ? 1: 0; 
+			BrEq = ((DataA === DataB)) ? 1 : 0;
+			BrLT = ((DataA < DataB)) ? 1: 0; 
 		end
 		else begin 
-			BrEq = (DataA === DataB) ? 1 : 0;
-			BrLT = ($signed(DataA) < $signed(DataB)) ? 1: 0; 
+			BrEq = ((DataA === DataB)) ? 1 : 0;
+			BrLT = (($signed(DataA) < $signed(DataB))) ? 1: 0; 
 		end
 	end
 endmodule

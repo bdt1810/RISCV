@@ -5,7 +5,7 @@ module Dff325(out, clear, in, clk);
 	output reg[4:0] out;
 	initial	
 	begin
-		 out <= 32'h0;
+		 out <= 5'h0;
 	end
 
 	always @(posedge clk)
